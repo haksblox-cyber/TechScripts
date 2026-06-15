@@ -1,9 +1,9 @@
 -- ═══════════════════════════════════════════════════════════
---   K1NG TECH  ∞  GOJO INFINITY — YIN & YANG EDITION
---   Owner: ThanhDuy  ·  Redesign: Ron  ·  Style: ☯ × ∞
+--   K1NG TECH
+--   Owner: ThanhDuy  ·  Redesign: Ron
 -- ═══════════════════════════════════════════════════════════
 
-local Players      = game:GetService("Players")
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
 local LocalPlayer  = Players.LocalPlayer
@@ -42,7 +42,7 @@ local C_SILVER = Color3.fromRGB(200, 200, 200)
 local C_WHITE  = Color3.fromRGB(255, 255, 255)
 
 -- ╔══════════════════════════════════════════════════════════╗
--- ║  OPEN BUTTON  — floating ∞ orb                          ║
+-- ║  OPEN BUTTON  — floating orb                          ║
 -- ╚══════════════════════════════════════════════════════════╝
 local OpenBtn = Instance.new("ImageButton")
 OpenBtn.Name             = "OpenBtn"
@@ -130,7 +130,7 @@ HDivider.Size             = UDim2.new(1, 0, 0, 1)
 HDivider.BorderSizePixel  = 0
 HDivider.ZIndex           = 4
 
--- ∞ logo mark
+-- logo mark
 local LogoLbl = Instance.new("TextLabel", Header)
 LogoLbl.BackgroundTransparency = 1
 LogoLbl.Position    = UDim2.new(0, 12, 0.5, -14)
