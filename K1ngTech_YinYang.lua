@@ -1,6 +1,6 @@
 -- ═══════════════════════════════════════════════════════════
---   K1NG TECH
---   Owner: ThanhDuy  ·  Redesign: Ron
+--   K1NG TECH  ∞  GOJO INFINITY — YIN & YANG EDITION
+--   Owner: ThanhDuy  ·  Redesign: Ron  ·  Style: ☯ × ∞
 -- ═══════════════════════════════════════════════════════════
 
 local Players = game:GetService("Players")
@@ -42,7 +42,7 @@ local C_SILVER = Color3.fromRGB(200, 200, 200)
 local C_WHITE  = Color3.fromRGB(255, 255, 255)
 
 -- ╔══════════════════════════════════════════════════════════╗
--- ║  OPEN BUTTON  — floating orb                          ║
+-- ║  OPEN BUTTON  — floating ∞ orb                          ║
 -- ╚══════════════════════════════════════════════════════════╝
 local OpenBtn = Instance.new("ImageButton")
 OpenBtn.Name             = "OpenBtn"
@@ -130,7 +130,7 @@ HDivider.Size             = UDim2.new(1, 0, 0, 1)
 HDivider.BorderSizePixel  = 0
 HDivider.ZIndex           = 4
 
--- logo mark
+-- ∞ logo mark
 local LogoLbl = Instance.new("TextLabel", Header)
 LogoLbl.BackgroundTransparency = 1
 LogoLbl.Position    = UDim2.new(0, 12, 0.5, -14)
@@ -490,6 +490,7 @@ local SmoothIdx    = 5
 -- [ NEW ] Adjustable Cooldown Settings
 local CooldownTime = 3.0    -- Change this value to adjust the CD delay in seconds
 local IsOnCooldown = false  -- Guard to prevent re-execution
+local UiOpen = true         -- Track if MainFrame is open/visible
 
 local function RefreshSlider()
     local pct = (SmoothIdx - 1) / (#SmoothVals - 1)
@@ -534,7 +535,6 @@ local function StartBillboardCooldown(char)
     local Billboard = Instance.new("BillboardGui")
     Billboard.Name = "YinYang_CD"
     
-    -- FIXED: Changed from absolute offset (pixels) to dynamic scale (studs)
     Billboard.Size = UDim2.new(3.5, 0, 3.5, 0) 
     Billboard.StudsOffsetWorldSpace = Vector3.new(0, 4, 0)
     
@@ -567,9 +567,8 @@ local function StartBillboardCooldown(char)
     TimeLbl.Font = Enum.Font.GothamBold
     TimeLbl.Text = string.format("%.1fs", CooldownTime)
     TimeLbl.TextColor3 = C_SILVER
-    TimeLbl.TextScaled = true -- FIXED: Scales text smoothly alongside camera distance
+    TimeLbl.TextScaled = true 
 
-    -- Dedicated independent stroke for the 3D billboard frame
     local BillboardStroke = Instance.new("UIStroke", Circle)
     BillboardStroke.Thickness = 2
     BillboardStroke.Color = C_WHITE
@@ -589,7 +588,6 @@ local function StartBillboardCooldown(char)
             local remaining = math.max(0, CooldownTime - elapsed)
             TimeLbl.Text = string.format("%.1fs", remaining)
             
-            -- FIXED: Targeted BillboardStroke instead of leaking into CStroke (the UI Close Button)
             BillboardStroke.Color = C_WHITE:Lerp(C_GREY, elapsed / CooldownTime)
         end
         
@@ -626,8 +624,9 @@ end
 -- ║  EVENTS                                                  ║
 -- ╚══════════════════════════════════════════════════════════╝
 
--- Open / close with spring animation
+-- Open GUI with spring animation
 local function OpenGUI()
+    UiOpen = true
     MF.Visible  = true
     MF.Size     = UDim2.new(0, 320, 0,   0)
     MF.Position = UDim2.new(0.5, -160, 0.5, 0)
@@ -635,3 +634,77 @@ local function OpenGUI()
         Size     = UDim2.new(0, 320, 0, 280),
         Position = UDim2.new(0.5, -160, 0.5, -140)
     }):Play()
+end
+
+-- Close GUI animation
+local function CloseGUI()
+    UiOpen = false
+    TweenService:Create(MF, TW_FAST, {
+        Size     = UDim2.new(0, 320, 0, 0),
+        Position = UDim2.new(0.5, -160, 0.5, 0)
+    }):Play()
+    task.delay(0.15, function()
+        MF.Visible = false
+    end)
+end
+
+-- Close button logic
+CloseBtn.MouseButton1Click:Connect(CloseGUI)
+
+-- Floating Orb Toggle Logic (Fixed: Now switches between Open and Close)
+OpenBtn.MouseButton1Click:Connect(function()
+    if UiOpen then
+        CloseGUI()
+    else
+        OpenGUI()
+    end
+end)
+
+-- Toggle functionality (Fixed: Plays sound here now!)
+ClickBtn.MouseButton1Click:Connect(function()
+    Enabled = not Enabled
+    SFX:Play() -- Sound triggers when turning on/off
+    
+    if Enabled then
+        StatusLbl.Text = "☯︎  •  ACTIVE"
+        StatusLbl.TextColor3 = C_WHITE
+        TweenService:Create(ToggleCircle, TW_FAST, {Position = UDim2.new(1, -24, 0.5, 0), BackgroundColor3 = C_WHITE}):Play()
+        ShowToast("Infinity Tech Enabled")
+        ConnectLogic()
+    else
+        StatusLbl.Text = "☯︎  •  INACTIVE"
+        StatusLbl.TextColor3 = C_GREY
+        TweenService:Create(ToggleCircle, TW_FAST, {Position = UDim2.new(0, 3, 0.5, 0), BackgroundColor3 = C_GREY}):Play()
+        ShowToast("Infinity Tech Disabled")
+        if Connection then Connection:Disconnect() Connection = nil end
+    end
+end)
+
+-- Slider adjustments
+MinusBtn.MouseButton1Click:Connect(function()
+    if SmoothIdx > 1 then
+        SmoothIdx = SmoothIdx - 1
+        Smoothness = SmoothVals[SmoothIdx]
+        RefreshSlider()
+    end
+end)
+
+PlusBtn.MouseButton1Click:Connect(function()
+    if SmoothIdx < #SmoothVals then
+        SmoothIdx = SmoothIdx + 1
+        Smoothness = SmoothVals[SmoothIdx]
+        RefreshSlider()
+    end
+end)
+
+-- Character Respawn Logic
+LocalPlayer.CharacterAdded:Connect(function()
+    if Enabled then
+        task.wait(1)
+        ConnectLogic()
+    end
+end)
+
+-- Initial UI Setup States
+MF.Visible = true 
+RefreshSlider()
